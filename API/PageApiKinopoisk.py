@@ -1,5 +1,6 @@
 import requests
 
+
 class KinopoiskApi:
     def __init__(self, base_url, api_key):
         self.base_url = base_url

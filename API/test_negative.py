@@ -1,3 +1,4 @@
+import allure
 import requests
 from PageApiKinopoisk import KinopoiskApi
 import os
@@ -12,27 +13,38 @@ BASE_URL = 'https://kinopoiskapiunofficial.tech/'
 api = KinopoiskApi(base_url=BASE_URL, api_key=API_KEY)
 
 
-    # Запрос без API-ключа (Проверка авторизации). Негативный тест
+@allure.story('Запрос без API-ключа (Проверка авторизации). Негативный тест')
+@allure.epic('API тесты')
+@allure.title('Запрос без API-ключа')
+@allure.description('Негативный тест')
 def test_api_key_unauthorized():
-    # Используем f-строку, чтобы подставить переменную с ключом в URL
-    url = f'{BASE_URL}api/v1/api_keys/{API_KEY}'
+    with allure.step(
+            'Используем f-строку, чтобы подставить переменную с ключом в URL'):
+        url = f'{BASE_URL}api/v1/api_keys/'
 
-    # Отправляем GET-запрос совсем без параметра headers
-    resp = requests.get(url)
+    with allure.step('Отправляем GET-запрос совсем без параметра headers'):
+        resp = requests.get(url)
 
-    # Печатаем в консоль реальный статус и ответ сервера, чтобы увидеть ошибку
-    print("Реальный статус-код:", resp.status_code)
-    print("Ответ сервера:", resp.text)
+    with allure.step(
+            'Печатаем в консоль реальный статус и ответ сервера, '
+            'чтобы увидеть ошибку'):
+        print("Реальный статус-код:", resp.status_code)
+        print("Ответ сервера:", resp.text)
 
-    # Проверяем статус-код (сервер должен вернуть 401) и заголовки ответа
-    assert resp.status_code == 401
-    assert "application/json" in resp.headers["content-type"]
+    with allure.step(
+            'Проверяем статус-код (сервер должен вернуть 401) '
+            'и заголовки ответа'):
+        assert resp.status_code == 401
+        assert "application/json" in resp.headers["content-type"]
 
 
-    # Запрос несуществующей страницы (невалидные параметры)
+@allure.story('Запрос несуществующей страницы (невалидные параметры)')
+@allure.epic('API тесты')
+@allure.title('Запрос несуществующей страницы')
+@allure.description('Негативный тест')
 def test_film_list_invalid_page():
-    # Очищаем URL от дублирования параметров
-    url = f'{BASE_URL}api/v2.2/films/collections'
+    with allure.step('Очищаем URL от дублирования параметров'):
+        url = f'{BASE_URL}api/v2.2/films/collections'
 
     params = {
         'type': 'TOP_POPULAR_ALL',
@@ -41,9 +53,11 @@ def test_film_list_invalid_page():
 
     resp = api.send_get_request(url, params=params)
 
-    # Печатаем в консоль реальный статус и ответ сервера, чтобы увидеть ошибку
-    print("Реальный статус-код:", resp.status_code)
-    print("Ответ сервера:", resp.text)
+    with allure.step(
+            'Печатаем в консоль реальный статус и ответ сервера, '
+            'чтобы увидеть ошибку'):
+        print("Реальный статус-код:", resp.status_code)
+        print("Ответ сервера:", resp.text)
 
-    # Временно комментируем ассерт, чтобы тест не падал, пока мы смотрим лог
-    assert resp.status_code == 400
+    with allure.step('Проверяем статус-код (сервер должен вернуть 400)'):
+        assert resp.status_code == 400
